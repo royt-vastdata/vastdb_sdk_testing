@@ -1863,9 +1863,21 @@ class VastdbApi:
             headers['tabular-retry-count'] = str(retry_count)
         res = self.session.post(self._api_prefix(bucket=bucket, schema=schema, table=table, command="data"),
                                 data=import_req, headers=headers, stream=True)
+        res = iterate_over_import_data_response(res, expected_retvals=expected_retvals)
 
         return self._check_res(res, "import_data", expected_retvals)
 
+    def iterate_over_import_data_response(response, expected_retvals):
+        if response.status_code != 200:
+            return res
+        for chunk in (res.raw.read_chunked()):
+            log.info(f"import data chunk={chunk}, result: {chunk_dict['res']}")
+            chunk_dict = json.loads(chunk)
+            if chunk_dict['res'] in expected_retvals:
+                log.info(f"import finished with expected result={chunk_dict['res']}, error message: {chunk_dict['err_msg']}")
+                return res
+        return res
+        
     def merge_data(self):
         """
         TODO
