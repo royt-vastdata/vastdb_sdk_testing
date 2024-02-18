@@ -1867,7 +1867,7 @@ class VastdbApi:
 
         return self._check_res(res, "import_data", expected_retvals)
 
-    def iterate_over_import_data_response(response, expected_retvals):
+    def iterate_over_import_data_response(self, response, expected_retvals):
         if response.status_code != 200:
             return res
         for chunk in (res.raw.read_chunked()):
